@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gameverse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Gameverse</h1>
+        <nav>
+            <ul>
+                {% if session.get('logged_in') %}
+                <li><a href="{{ url_for('logout') }}">Cerrar Sesión</a></li>
+                {% else %}
+                <li><button id="loginBtn">Iniciar Sesión</button></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <section class="banner">
+        <h2>Welcome to Gameverse</h2>
+        <p>Your ultimate gaming destination. Explore the best games now!</p>
+        <button>Browse Now</button>
+    </section>
+
+    <!-- Formulario de búsqueda y filtros -->
+<form method="POST" class="filters-form">
+    <div class="search-bar-container">
+        <input type="text" name="search" class="search-bar" placeholder="Buscar juegos..." aria-label="Buscar juegos"/>
+        <button type="submit" class="search-btn">Buscar</button>
+    </div>
+
+    <div class="filter-options">
+        <select name="genre" aria-label="Selecciona un género">
+            <option value="">Selecciona un género</option>
+            <option value="RPG">RPG</option>
+            <option value="Action">Acción</option>
+            <option value="Party">Fiesta</option>
+        </select>
+
+        <select name="year" aria-label="Selecciona un año">
+            <option value="">Selecciona un año</option>
+            <option value="2015">2015</option>
+            <option value="2018">2018</option>
+            <option value="2020">2020</option>
+        </select>
+
+        <select name="size" aria-label="Selecciona el tamaño">
+            <option value="">Selecciona el tamaño</option>
+            <option value="0.5 GB">0.5 GB</option>
+            <option value="15 GB">15 GB</option>
+            <option value="35 GB">35 GB</option>
+            <option value="70 GB">70 GB</option>
+        </select>
+    </div>
+</form>
+
+    <!-- Contenedor de juegos -->
+    <div class="games-container">
+        {% for game in games %}
+        <div class="game-card">
+            <img src="{{ url_for('static', filename=game.image) }}" alt="{{ game.title }}">
+            <h2>{{ game.title }}</h2>
+            <p>Género: {{ game.genre }}</p>
+            <p>Año: {{ game.year }}</p>
+            <p>Tamaño: {{ game.size }}</p>
+            <p>{{ game.price }}</p>
+            <a href="{{ url_for('buy', game_title=game.title) }}"><button>Buy Now</button></a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Gameverse México. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Modal para iniciar sesión
+        var loginModal = document.getElementById("loginModal");
+        var loginBtn = document.getElementById("loginBtn");
+        var closeBtn = document.getElementsByClassName("close")[0];
+
+        loginBtn.onclick = function() {
+            loginModal.style.display = "block";
+        }
+
+        closeBtn.onclick = function() {
+            loginModal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == loginModal) {
+                loginModal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
